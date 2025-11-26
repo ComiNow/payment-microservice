@@ -8,23 +8,27 @@ async function bootstrap() {
   const logger = new Logger('Payments-microservice');
 
   const app = await NestFactory.create(AppModule, {
-    rawBody: true
+    rawBody: true,
   });
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
-    })
+    }),
   );
 
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.NATS,
-    options: {
-      servers: envs.natsServers
+  app.connectMicroservice<MicroserviceOptions>(
+    {
+      transport: Transport.NATS,
+      options: {
+        servers: envs.natsServers,
+        queue: 'payments-service',
+      },
     },
-  }, {
-    inheritAppConfig: true
-  })
+    {
+      inheritAppConfig: true,
+    },
+  );
   await app.startAllMicroservices();
 
   await app.listen(envs.port);
