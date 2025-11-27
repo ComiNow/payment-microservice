@@ -22,6 +22,7 @@ async function bootstrap() {
       transport: Transport.NATS,
       options: {
         servers: envs.natsServers,
+        maxPacketSize: 10 * 1024 * 1024,
         queue: 'payments-service',
       },
     },
